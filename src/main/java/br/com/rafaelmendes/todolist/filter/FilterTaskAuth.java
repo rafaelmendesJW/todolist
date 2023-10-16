@@ -16,14 +16,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class FilterTaskAuth extends OncePerRequestFilter {
-    
+
     @Autowired
     private UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-                
 
         var servletPath = request.getServletPath();
         if (servletPath.equals("/tasks/")) {
@@ -48,6 +47,8 @@ public class FilterTaskAuth extends OncePerRequestFilter {
                 // validar a senha
                 var passwordVerify = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
                 if (passwordVerify.verified) {
+                    //segue viagem
+                    request.setAttribute("idUser", user.getId());
                     filterChain.doFilter(request, response);
 
                 } else {
